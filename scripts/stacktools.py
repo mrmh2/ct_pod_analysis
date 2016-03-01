@@ -11,13 +11,35 @@ import skimage.draw
 import skimage.measure
 from skimage.filters import threshold_otsu
 
-from scipy.ndimage.morphology import binary_erosion
+from scipy.ndimage.morphology import (
+    binary_erosion, 
+    binary_dilation,
+)
+
+from skimage.morphology import (
+    convex_hull_image
+)
 
 from jicbioimage.core.image import Image
 
 IMAGE_EXTS = ['.png', '.tif', '.tiff']
 HERE = os.path.dirname(__file__)
 OUTPUT = os.path.join(HERE, '..', 'output')
+
+def load_stack_from_path(input_stack_path):
+    """Load a stack from a given path."""
+
+    all_files = os.listdir(input_stack_path)
+    image_files = filter(is_image_filename, all_files)
+    sorted_image_files = sorted_nicely(image_files)
+    full_image_paths = [os.path.join(input_stack_path, fn) 
+                        for fn in sorted_image_files]
+
+    all_images = [Image.from_file(fn) for fn in full_image_paths]
+
+    stack = np.dstack(all_images)
+
+    return stack
 
 def sorted_nicely( l ):
     """ Sort the given iterable in the way that humans expect."""
@@ -89,7 +111,7 @@ def spike_stack():
 
     save_stack('sectioned', sectioned_stack)
 
-def segment_it():
+def extract_single_seed():
     input_stack_path = 'sectioned.stack'
 
     all_files = os.listdir(input_stack_path)
@@ -118,21 +140,35 @@ def segment_it():
 
     labels = np.unique(ccs)
 
-    # print labels
-
-    # def label_size(l):
-    #     return len(np.where(ccs==l)[0])
-
-    # sizes = [(label_size(l), l) for l in labels]
-
-    # print sorted(sizes, reverse=True)
-
-    #imsave('lablet.png', ccs[:,:,100])
-
-    print ccs[250, 250, 100]
+    #print ccs[250, 250, 100]
     seed = np.where(ccs == 148)
 
-    print len(seed[0])
+    mask = np.zeros(ccs.shape, dtype=np.uint8)
+
+    mask[seed] = 255
+
+    dilated = binary_dilation(mask, structure=selem, iterations=2)
+
+    save_stack('dilated', dilated)
+
+    mask_mult = dilated / np.max(dilated)
+
+    single_seed = np.multiply(mask_mult, stack)
+
+    save_stack('single_seed', single_seed)
+    
+
+    # _, _, zdim = dilated.shape
+    # nstack = []
+    # for z in range(zdim):
+    #     nstack.append(convex_hull_image(dilated[:,:,z]))
+
+    # fstack = np.dstack(*nstack)
+
+    # save_stack('convex_hull', fstack)
+    
+
+    #print len(seed[0])
 
 def spike_stuff():
     
@@ -172,6 +208,8 @@ def spike_stuff():
 
 def main():
 
+    pass
+
     # single = 'stacklet/sample_Z300.png'
     # im = Image.from_file(single)
 
@@ -184,7 +222,9 @@ def main():
 
     #spike_stuff()
 
-    segment_it()
+    #segment_it()
+
+
 
 if __name__ == "__main__":
     main()
