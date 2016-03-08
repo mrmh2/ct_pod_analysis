@@ -43,7 +43,8 @@ def read_isq_file(filename):
         tmp_int = bytes_to_int(header_bytes[56:60])
 
         #more_bytes = f.read(xdim * ydim * 2 * zdim)
-        more_bytes = f.read(xdim * ydim * 2 * 600)
+        #more_bytes = f.read(xdim * ydim * 2 * 600)
+        more_bytes = f.read()
 
         im_array = np.fromstring(more_bytes, dtype='<i2')
 
