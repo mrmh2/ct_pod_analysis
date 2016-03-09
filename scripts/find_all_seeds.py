@@ -178,7 +178,7 @@ def find_seed_centroids(isq_filename):
     """Load given ISQ filename and find the coordinates of all of the seeds
     in that ISQ file."""
 
-    stack = load_stack_from_path('spikey/')
+    stack = load_stack_from_path('output/stripped.stack')
 
     distances = distance_transform_cdt(stack)
     seeds = distances > 10
@@ -203,20 +203,6 @@ def main():
     args = parser.parse_args()
 
     find_seed_centroids(args.filename)
-
-    #find_seeds_in_isq_image(args.filename)
-
-    #spike_circles()
-
-    #spike_distance_transform()
-
-    # centroid = 170, 350, 369
-
-    # stack = find_section_of_isq_file(args.filename, centroid, 50)
-
-    # save_stack('lowseed', stack)
-
-
 
 if __name__ == "__main__":
     main()
