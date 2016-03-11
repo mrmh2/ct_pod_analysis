@@ -62,8 +62,8 @@ class Image3D(np.ndarray):
 
         return image3d
 
-    def save(self, path):
-        stack_dir = os.path.join(path + '.stack')
+    def save(self, path, z_index_offset=0):
+        stack_dir = path
 
         if not os.path.isdir(stack_dir):
             mkdir_p(stack_dir)
@@ -74,7 +74,7 @@ class Image3D(np.ndarray):
         scaled = np.uint8(255 * ((self - smin) / float(smax - smin)))
 
         for z in range(zdim):
-            filename = 'z{}.png'.format(z)
+            filename = 'z{}.png'.format(z+z_index_offset)
             full_name = os.path.join(stack_dir, filename)
             im = PILImage.fromarray(scaled[:,:,z])
             im.save(full_name)

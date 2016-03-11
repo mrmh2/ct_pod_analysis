@@ -2,23 +2,49 @@
 
 import argparse
 
-import read_isq
+import numpy as np
+
+from read_isq import read_isq_segment
+
+from image3d import Image3D
+from pathmanager import PathManager
+
+import scipy.misc
 
 def convert_large_isq_file(isq_filename, stack_path):
 
-    pass
+    chunk_size = 20
+    position = 0
+    while True:
+        print "Reading {}".format(position/chunk_size)
+        try:
+            part_array = read_isq_segment(isq_filename, position, chunk_size)
+            #conv_array = part_array.astype(np.int32) - part_array.min()
+            conv_array = np.maximum(part_array, 0)
+            conv_array.view(Image3D).save(stack_path, position)
+        except IOError:
+            break
 
+        position += chunk_size
+
+
+def pconvert_isq_file(isq_filename):
+
+    pm = PathManager(isq_filename, working_base='/localscratch/ct_analysis')
+
+    stack_path = pm.spath('raw_stack')
+
+    convert_large_isq_file(isq_filename, stack_path)
 
 def main():
 
     parser = argparse.ArgumentParser(__doc__)
     parser.add_argument('isq_filename', help="Path to ISQ file")
-    parser.add_argument('stack_path', help="Path to write output stack")
 
-    args = parse.parse_args()
+    args = parser.parse_args()
 
-    convert_large_isq_file(args.isq_filename, args.stack_path)
-
+    pconvert_isq_file(args.isq_filename)
+    #spikey(args.isq_filename)
 
 if __name__ == "__main__":
     main()

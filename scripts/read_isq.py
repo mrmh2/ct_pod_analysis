@@ -49,7 +49,31 @@ def read_isq_file(filename):
         im_array = np.fromstring(more_bytes, dtype='<i2')
 
     nim = np.reshape(im_array, (xdim, ydim, -1), order='F')
- 
+
+    return nim
+
+def read_isq_segment(filename, start_z, n_planes):
+    """Read part of ISQ file, starting at start_z and reading
+    n_planes of data."""
+
+    with io.open(filename, 'rb') as f:
+        header_bytes = f.read(2048)
+
+        xdim = bytes_to_int(header_bytes[44:47])
+        ydim = bytes_to_int(header_bytes[48:51])
+        zdim = bytes_to_int(header_bytes[52:55])
+
+        tmp_int = bytes_to_int(header_bytes[56:60])
+
+        f.seek(2048 + 2 * xdim * ydim * start_z)
+        more_bytes = f.read(2 * xdim * ydim * n_planes)
+
+        if len(more_bytes) == 0:
+            raise IOError("End of file")
+
+        im_array = np.fromstring(more_bytes, dtype='<i2')
+
+    nim = np.reshape(im_array, (xdim, ydim, -1), order='F')
 
     return nim
 
@@ -57,20 +81,6 @@ def imsave_signed(filename, array):
 
     array = np.maximum(array, 0)
     scipy.misc.imsave(filename, array)
-
-def spike_ct(filename):
-
-    image = read_isq_file(filename)
-
-    #90 - 170
-
-    # 279 - 575 for large
-
-    path = 'stacklet'
-
-    for z in range(279, 575):
-        filename = os.path.join(path, 'sample_Z{}.png'.format(str(z)))
-        imsave_signed(filename, image[:,:,z])
 
 def main():
     parser = argparse.ArgumentParser()
