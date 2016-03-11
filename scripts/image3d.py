@@ -1,5 +1,6 @@
 import os
 import re
+import errno
 import argparse
 
 import scipy.misc
@@ -10,6 +11,14 @@ from PIL import Image as PILImage
 from jicbioimage.core.image import Image
 
 IMAGE_EXTS = ['.png', '.tif', '.tiff']
+
+def mkdir_p(path):
+    try:
+        os.makedirs(path)   
+    except OSError as exc:
+        if exc.errno == errno.EEXIST:
+            pass
+        else: raise
 
 def sorted_nicely( l ):
     """ Sort the given iterable in the way that humans expect."""
@@ -57,7 +66,7 @@ class Image3D(np.ndarray):
         stack_dir = os.path.join(path + '.stack')
 
         if not os.path.isdir(stack_dir):
-            os.mkdir(stack_dir)
+            mkdir_p(stack_dir)
 
         xdim, ydim, zdim = self.shape
 
@@ -70,4 +79,3 @@ class Image3D(np.ndarray):
             im = PILImage.fromarray(scaled[:,:,z])
             im.save(full_name)
             
-

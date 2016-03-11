@@ -43,7 +43,7 @@ def isolate_single_seed(stack_path):
     """Load stack then isolate seed."""
 
     sigma = 10
-    iterations = 2
+    iterations = 1
 
     raw_stack = Image3D.from_path(stack_path)
 

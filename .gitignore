@@ -1,1 +1,7 @@
 *~
+*.png
+*.stack
+working/
+tmp/
+venv/
+data/

@@ -8,10 +8,16 @@ import yaml
 from extract_single_seed_stack import find_section_of_isq_file
 from stacktools import save_stack
 
-def generate_seed_stacks(isq_filename, seed_filename):
+from pathmanager import PathManager
+from image3d import Image3D
+
+def generate_seed_stacks(pm):
+
+    seed_filename = pm.spath('seeds.yml')
+    isq_filename = pm.rawpath
 
     with open(seed_filename) as f:
-        seed_centroids = yaml.load(f)
+        seed_centroids = yaml.load(f)['seeds']
 
     for name, centroid in seed_centroids.items():
         print centroid
@@ -21,19 +27,20 @@ def generate_seed_stacks(isq_filename, seed_filename):
         except IndexError:
             continue
 
-        save_stack(name, stack)
+        seed_filename = pm.spath(name)
+        stack.view(Image3D).save(seed_filename)
 
 def main():
     parser = argparse.ArgumentParser(__doc__)
 
     parser.add_argument('isq_filename', 
                         help='Path to file with CT data')
-    parser.add_argument('seed_filename', 
-                        help='Path to file with seed centroids')
 
     args = parser.parse_args()
 
-    generate_seed_stacks(args.isq_filename, args.seed_filename)
+    pm = PathManager(args.isq_filename)
+
+    generate_seed_stacks(pm)
 
 
 if __name__ == "__main__":
