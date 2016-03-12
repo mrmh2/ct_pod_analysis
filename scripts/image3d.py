@@ -79,3 +79,7 @@ class Image3D(np.ndarray):
             im = PILImage.fromarray(scaled[:,:,z])
             im.save(full_name)
             
+    def tobytes(self):
+        """Fixes an incompatility problem with some PIL versions."""
+
+        return self.tostring()
