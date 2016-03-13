@@ -27,11 +27,10 @@ from jicbioimage.transform import (
     find_edges_sobel
 )
 
-
 from extract_single_seed_stack import find_section_of_isq_file
 
 from image3d import Image3D
-from pathmanager import PathManager
+from datamanager import DataManager
 
 def find_seed_centroids(stack):
     """Find seeds in given binary stack, returning dictionary containing seed
@@ -58,15 +57,15 @@ def main():
 
     args = parser.parse_args()
 
-    pm = PathManager(args.filename)
+    dm = DataManager(args.filename)
 
-    stack = Image3D.from_path(pm.spath('stripped'))
+    stack = Image3D.from_path(dm.spath('stripped'))
     seed_labels = find_seed_centroids(stack)
 
     stage = {}
-    stage['name'] = pm.name
+    stage['name'] = dm.name
     stage['seeds'] = seed_labels
-    with open(pm.spath('seeds.yml'), 'w') as f:
+    with open(dm.spath('seeds.yml'), 'w') as f:
         yaml.dump(stage, f)
 
 

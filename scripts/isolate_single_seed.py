@@ -39,7 +39,7 @@ def save_wrapper(image3d, name):
     
     return
 
-def isolate_single_seed(stack_path):
+def isolate_single_seed(stack_path, output_path):
     """Load stack then isolate seed."""
 
     sigma = 10
@@ -51,11 +51,9 @@ def isolate_single_seed(stack_path):
 
     smoothed = gaussian_filter(raw_stack, sigma).view(Image3D)
 
-    #smoothed.save('smoothed')
-
     edges = sobel_magnitude_nd(smoothed).view(Image3D)
 
-    edges.save('edges')
+    #edges.save('edges')
 
     labels = np.zeros(raw_stack.shape)
     cx, cy, cz = map(lambda x: x/2, raw_stack.shape)
@@ -64,25 +62,26 @@ def isolate_single_seed(stack_path):
     threshold = threshold_otsu(smoothed)
     thresholded = smoothed > threshold
 
-    thresholded.view(Image3D).save('thresh')
+    #thresholded.view(Image3D).save('thresh')
 
     segmentation = watershed(edges, markers=labels, mask=thresholded)
 
-    segmentation.view(Image3D).save('seg')
+    #segmentation.view(Image3D).save('seg')
 
     dilated = binary_dilation(segmentation, iterations=iterations)
 
     isolate = np.multiply(raw_stack, dilated)
 
-    isolate.view(Image3D).save('isolate')
+    isolate.view(Image3D).save(output_path)
 
 def main():
     parser = argparse.ArgumentParser(__doc__)
     parser.add_argument('stack_path', help='Path to stack')
+    parser.add_argument('output_path', help='Output path')
 
     args = parser.parse_args()
 
-    isolate_single_seed(args.stack_path)
+    isolate_single_seed(args.stack_path, args.output_path)
 
 if __name__ == "__main__":
     main()
