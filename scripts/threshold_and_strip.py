@@ -15,7 +15,7 @@ from jicbioimage.transform import (
 
 from stacktools import save_stack, load_stack_from_path
 
-from pathmanager import PathManager
+from datamanager import DataManager
 
 from scipy.misc import imsave
 
@@ -105,7 +105,19 @@ def threshold_and_strip(isq_filename):
 
     pm = PathManager(isq_filename)
 
-    thresholded = load_stack_from_path(pm.spath('thresholded.stack'))
+    thresholded = load_stack_from_path(pm.spath('thresholded'))
+
+    stripped_stack = strip_stack(thresholded).view(Image3D)
+
+    stripped_stack.save(pm.spath('stripped'))
+                                       
+    #save_stack('stripped', stripped_stack)
+
+def dthreshold_and_strip(isq_filename):
+
+    dm = DataManager(isq_filename)
+
+    thresholded = load_stack_from_path(pm.spath('thresholded'))
 
     stripped_stack = strip_stack(thresholded).view(Image3D)
 
@@ -151,6 +163,22 @@ def strip_stack(thresholded):
 
     return stripped_stack
 
+def dm_threshold_and_strip(isq_filename):
+
+    dm = DataManager(isq_filename)
+
+    raw_stack_path = dm.spath('raw_stack')
+
+    raw_stack = Image3D.from_path(raw_stack_path)
+
+    threshold = threshold_otsu(raw_stack)
+
+    thresholded = (raw_stack > threshold).view(Image3D)
+
+    stripped_stack = strip_stack(thresholded).view(Image3D)
+
+    stripped_stack.save(dm.spath('stripped'))
+
 def main():
     parser = argparse.ArgumentParser(__doc__)
 
@@ -158,10 +186,13 @@ def main():
     
     args = parser.parse_args()
 
+    dm_threshold_and_strip(args.isq_filename)
+
     #threshold_and_strip(args.isq_filename)
 
+    #pm = PathManager(args.isq_filename)
     #load_and_threshold(args.isq_filename, pm.spath('thresholded'))
-    threshold_and_strip(args.isq_filename)
+    #threshold_and_strip(args.isq_filename)
 
 if __name__ == "__main__":
     main()

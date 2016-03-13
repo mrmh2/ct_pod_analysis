@@ -7,7 +7,7 @@ import numpy as np
 from read_isq import read_isq_segment
 
 from image3d import Image3D
-from pathmanager import PathManager
+from datamanager import DataManager
 
 import scipy.misc
 
@@ -28,11 +28,11 @@ def convert_large_isq_file(isq_filename, stack_path):
         position += chunk_size
 
 
-def pconvert_isq_file(isq_filename):
+def dconvert_isq_file(isq_filename):
 
-    pm = PathManager(isq_filename, working_base='/localscratch/ct_analysis')
+    dm = DataManager(isq_filename, working_base='/localscratch/ct_analysis')
 
-    stack_path = pm.spath('raw_stack')
+    stack_path = dm.spath('raw_stack')
 
     convert_large_isq_file(isq_filename, stack_path)
 
@@ -43,7 +43,7 @@ def main():
 
     args = parser.parse_args()
 
-    pconvert_isq_file(args.isq_filename)
+    dconvert_isq_file(args.isq_filename)
     #spikey(args.isq_filename)
 
 if __name__ == "__main__":

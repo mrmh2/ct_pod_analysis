@@ -5,3 +5,4 @@ working/
 tmp/
 venv/
 data/
+*.pyc

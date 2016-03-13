@@ -27,9 +27,6 @@ from jicbioimage.transform import (
     find_edges_sobel
 )
 
-from jicbioimage.illustrate import AnnotatedImage
-
-import SimpleITK as sitk
 
 from extract_single_seed_stack import find_section_of_isq_file
 
@@ -63,7 +60,7 @@ def main():
 
     pm = PathManager(args.filename)
 
-    stack = Image3D.from_path(pm.spath('stripped.stack'))
+    stack = Image3D.from_path(pm.spath('stripped'))
     seed_labels = find_seed_centroids(stack)
 
     stage = {}
