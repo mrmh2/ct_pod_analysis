@@ -8,7 +8,7 @@ import numpy as np
 
 from PIL import Image as PILImage
 
-from jicbioimage.core.image import Image
+#from jicbioimage.core.image import Image
 
 IMAGE_EXTS = ['.png', '.tif', '.tiff']
 
@@ -46,7 +46,8 @@ def load_stack_from_path(input_stack_path):
     full_image_paths = [os.path.join(input_stack_path, fn) 
                         for fn in sorted_image_files]
 
-    all_images = [Image.from_file(fn) for fn in full_image_paths]
+    #all_images = [Image.from_file(fn) for fn in full_image_paths]
+    all_images = [scipy.misc.imread(fn) for fn in full_image_paths]    
 
     stack = np.dstack(all_images)
 
