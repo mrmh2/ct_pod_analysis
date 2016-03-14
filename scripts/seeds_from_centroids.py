@@ -1,12 +1,12 @@
 """Given an ISQ file and a YAML file containing seed centroids, generate stacks
 for each seed in the file."""
 
+import os
 import argparse
 
 import yaml
 
 from extract_single_seed_stack import find_section_of_isq_file
-from stacktools import save_stack
 
 from datamanager import DataManager
 from image3d import Image3D
@@ -27,7 +27,8 @@ def generate_seed_stacks(dm):
         except IndexError:
             continue
 
-        seed_filename = dm.spath(name)
+        subname = os.path.join('seeds', name)
+        seed_filename = dm.spath(subname)
         stack.view(Image3D).save(seed_filename)
 
 def main():
