@@ -7,6 +7,13 @@ import yaml
 HERE = os.path.dirname(__file__)
 WORKING_BASE = os.path.join(HERE, '..', 'working')
 
+# Start with HERE + /working
+
+# Override with base_file_path
+
+# then env
+
+
 class DataManager(object):
 
     def __init__(self, base_file_path, working_base=WORKING_BASE):

@@ -3,6 +3,8 @@
 import os
 import subprocess
 
+import redis
+
 from datamanager import DataManager
 
 class Task(object):
@@ -48,12 +50,38 @@ def populate_queue(queue, fn):
 
         subprocess.call(command)
 
+def spikey_redis(fn):
+
+    r = redis.StrictRedis(host='192.168.99.100')
+
+    dm = DataManager(fn)
+
+    seeds_dir = dm.spath('seeds')
+    isolated_dir = dm.spath('isolated_seeds')
+    docker_seeds_dir = '/working/C0000230/seeds'
+    docker_isolated_dir = '/working/C0000230/isolated_seeds'
+
+    prefix = 'python /code/ct_pod_analysis/scripts/isolate_single_seed.py'
+
+    for seed_file in os.listdir(seeds_dir)[2:10]:
+
+        input_file = os.path.join(docker_seeds_dir, seed_file)
+        output_file = os.path.join(docker_isolated_dir, seed_file)
+
+        command = "{} {} {}".format(prefix, input_file, output_file)
+
+        r.lpush("tasks", command)
+
+
 def main():
-    mainqueue = WorkQueue()
+
+    #mainqueue = WorkQueue()
 
     fn = 'data/raw/C0000230.ISQ'
 
-    populate_queue(mainqueue, fn)
+    spikey_redis(fn)
+
+    #populate_queue(mainqueue, fn)
 
     # words = ['once', 'upon', 'a', 'time']
     # command = ['echo', 'hello']
