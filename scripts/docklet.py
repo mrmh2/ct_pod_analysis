@@ -50,10 +50,10 @@ def main():
 
     images = cli.images()
 
-    docker_run_something(cli)
+    #docker_run_something(cli)
    # pprint(images)
 
-    #build_ct_processor(cli)
+    build_ct_processor(cli)
 
 if __name__ == "__main__":
     main()

@@ -30,6 +30,7 @@ def dump_bytes(bytes):
     for n, b in enumerate(bytes):
         print n, ord(b)
 
+
 def read_isq_file(filename):
     """Read an ISQ file."""
 

@@ -16,12 +16,13 @@ WORKING_BASE = os.path.join(HERE, '..', 'working')
 
 class DataManager(object):
 
-    def __init__(self, base_file_path, working_base=WORKING_BASE):
+    def __init__(self, base_file_path, working_base=None):
         self.rawpath = base_file_path
         self.basename = os.path.basename(base_file_path)
         self.name, self.ext = os.path.splitext(self.basename)
 
         raw_dir = os.path.dirname(self.rawpath)
+
         project_data_filename = os.path.join(raw_dir, 'project.yml')
 
         with open(project_data_filename) as f:

@@ -30,7 +30,7 @@ def convert_large_isq_file(isq_filename, stack_path):
 
 def dconvert_isq_file(isq_filename):
 
-    dm = DataManager(isq_filename, working_base='/Users/hartleym/working/ct_analysis')
+    dm = DataManager(isq_filename)
 
     stack_path = dm.spath('raw_stack')
 
